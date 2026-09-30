@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function AddTaskForm() {
+export default function AddTaskForm({ onTaskAdded }) {
   const [title, setTitle] = useState('');
   const [priority, setPriority] = useState('Medium');
   const [error, setError] = useState('');
@@ -18,7 +18,7 @@ export default function AddTaskForm() {
 
     try {
       // Send the request to the backend
-      const response = await fetch('http://localhost:5000/api/tasks', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/tasks`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,6 +38,11 @@ export default function AddTaskForm() {
       // Success: Clear the form
       setTitle('');
       setPriority('Medium');
+      
+      // Notify parent to refresh the task list
+      if (onTaskAdded) {
+        onTaskAdded();
+      }
       
     } catch (err) {
       setError(err.message);
